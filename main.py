@@ -1,7 +1,7 @@
 import pygame as pg
 import sys
 import time
-from helpers import generate, update_rects
+from helpers import generate, update_rects, display_info
 
 pg.init()
 size = width, height = 1000, 600
@@ -16,19 +16,20 @@ screen = pg.display.set_mode(size)
 pg.display.set_caption('Sorting')
 
 # Fonts
+smallFont = pg.font.Font("Roboto-Black.ttf", 14)
 mediumFont = pg.font.Font("Roboto-Black.ttf", 28)
 largeFont = pg.font.Font("Roboto-Black.ttf", 40)
 
 current_arr = generate()
+current_rects = update_rects(current_arr)
+st = None
 sorting = False
 
 
-def draw_arr(arr, selected=[], end=False):
+def draw_arr(rects, selected=[], end=False):
     '''
     Take in arr and draw the rectangles for it
     '''
-    rects = update_rects(arr)
-
     for count, rect in enumerate(rects):
         if count in selected:
             if not end:
@@ -71,32 +72,47 @@ while True:
             if gen_button.collidepoint(mouse):
                 time.sleep(0.2)
                 current_arr = generate()
+                current_rects = update_rects(current_arr)
             elif sort_button.collidepoint(mouse):
                 time.sleep(0.2)
                 sorting = True
+                st = time.time()
 
     elif sorting:
+        et = None
         for i in range(len(current_arr)-1):
             count = 0
             for j in range(len(current_arr)-i-1):
                 if current_arr[j] > current_arr[j+1]:
                     current_arr[j], current_arr[j+1] = current_arr[j+1], current_arr[j]
                     screen.fill(black)
-                    draw_arr(current_arr, [j, j+1])
-                    pg.display.flip()
+                    current_rects = update_rects(current_arr)
+                    draw_arr(current_rects, [j, j+1])
                     count += 1
+
+                text = display_info("Bubble", st, time.time(), smallFont)
+                screen.blit(text[0][0], text[0][1])
+                screen.blit(text[1][0], text[1][1])
+                pg.display.flip()
 
             if not count:
                 break
 
+        et = time.time()
+
         for count, i in enumerate(current_arr):
             lst = [x for x in range(len(current_arr)) if x < i]
             screen.fill(black)
-            draw_arr(current_arr, lst, True)
+            text = display_info("Bubble", st, et, smallFont)
+            screen.blit(text[0][0], text[0][1])
+            screen.blit(text[1][0], text[1][1])
+            current_rects = update_rects(current_arr)
+            draw_arr(current_rects, lst, True)
             pg.display.flip()
             time.sleep(0.01)
 
         sorting = False
+        st = None
 
-    draw_arr(current_arr)
+    draw_arr(current_rects)
     pg.display.flip()
