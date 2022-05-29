@@ -6,16 +6,24 @@ def generate():
     '''
     Generate new list of values
     '''
-    lst = list()
+    lst = set()
 
-    for i in range(160):
-        lst.append(random.randint(1, 500))
+    while len(lst) < 200:
+        lst.add(random.randint(1, 500))
 
-    return random.shuffle(lst)
+    lst = list(lst)
+    random.shuffle(lst)
+    return lst
 
 
 def update_rects(arr):
     '''
     Take in arr and generate pg.Rect() objects for it
     '''
-    pass
+    lst = list()
+
+    for count, i in enumerate(arr):
+        lst.append(pg.Rect((count*5, 600-i), (4, i)))
+
+    return lst
+
