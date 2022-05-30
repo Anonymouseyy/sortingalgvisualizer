@@ -1,13 +1,14 @@
 import pygame as pg
 import sys
 import time
-from helpers import generate, update_rects, display_info
+from helpers import generate, update_rects, display_info, OptionBox
 
 pg.init()
 size = width, height = 1000, 600
 
 # Colors
 white = (255, 255, 255)
+gray = (138, 135, 128)
 black = (0, 0, 0)
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -22,9 +23,11 @@ largeFont = pg.font.Font("Roboto-Black.ttf", 40)
 
 current_arr = generate()
 current_rects = update_rects(current_arr)
+sort_types = ["Bubble", "Insertion"]
 st = None
 sort_type = None
 sorting = False
+sort_options = OptionBox(width/2, 50, width/3-20, 85, white, gray, mediumFont, sort_types)
 
 
 def draw_arr(rects, selected=[], end=False):
@@ -42,11 +45,13 @@ def draw_arr(rects, selected=[], end=False):
 
 
 while True:
-    for event in pg.event.get():
+    event_list = pg.event.get()
+    for event in event_list:
         if event.type == pg.QUIT:
             sys.exit()
 
     screen.fill(black)
+    draw_arr(current_rects)
 
     if not sorting:
         # Display generate button
@@ -58,23 +63,18 @@ while True:
         pg.draw.rect(screen, white, gen_button)
         screen.blit(gen, gen_rect)
 
+        # Display sort options
+        sort_options.draw(screen)
+        selected_option = sort_options.update(event_list)
+
         # Display sort button
         sort_button = pg.Rect(0, 0, width / 3, 80)
-        sort_button.center = ((width-width/6-10), 50)
-        sort = mediumFont.render("Bubble Sort", True, black)
+        sort_button.center = ((width - width / 6 - 10), 50)
+        sort = mediumFont.render("Sort", True, black)
         sort_rect = sort.get_rect()
         sort_rect.center = sort_button.center
         pg.draw.rect(screen, white, sort_button)
         screen.blit(sort, sort_rect)
-
-        # Display sort button
-        isort_button = pg.Rect(0, 0, width / 3-50, 80)
-        isort_button.center = (width//2, 50)
-        isort = mediumFont.render("Insertion Sort", True, black)
-        isort_rect = isort.get_rect()
-        isort_rect.center = isort_button.center
-        pg.draw.rect(screen, white, isort_button)
-        screen.blit(isort, isort_rect)
 
         click, _, _ = pg.mouse.get_pressed()
         if click == 1:
@@ -87,12 +87,7 @@ while True:
                 time.sleep(0.2)
                 sorting = True
                 st = time.time()
-                sort_type = "Bubble"
-            elif isort_button.collidepoint(mouse):
-                time.sleep(0.2)
-                sorting = True
-                st = time.time()
-                sort_type = "Insertion"
+                sort_type = sort_types[selected_option]
 
     elif sorting:
         et = None
@@ -106,6 +101,10 @@ while True:
                         current_rects = update_rects(current_arr)
                         draw_arr(current_rects, [j, j+1])
                         count += 1
+
+                    for event in pg.event.get():
+                        if event.type == pg.QUIT:
+                            sys.exit()
 
                     text = display_info("Bubble", st, time.time(), smallFont)
                     screen.blit(text[0][0], text[0][1])
@@ -127,6 +126,10 @@ while True:
                     screen.fill(black)
                     current_rects = update_rects(current_arr)
                     draw_arr(current_rects, [j, i])
+
+                    for event in pg.event.get():
+                        if event.type == pg.QUIT:
+                            sys.exit()
 
                     text = display_info("Insertion", st, time.time(), smallFont)
                     screen.blit(text[0][0], text[0][1])
@@ -152,5 +155,4 @@ while True:
         sort_type = None
         st = None
 
-    draw_arr(current_rects)
     pg.display.flip()
