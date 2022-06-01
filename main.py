@@ -23,7 +23,7 @@ largeFont = pg.font.Font("Roboto-Black.ttf", 40)
 
 current_arr = generate()
 current_rects = update_rects(current_arr)
-sort_types = ["Bubble", "Insertion"]
+sort_types = ["Bubble", "Selection", "Insertion"]
 st = None
 sort_type = None
 sorting = False
@@ -137,6 +137,29 @@ while True:
                     pg.display.flip()
 
                 current_arr[j+1] = key
+
+        elif sort_type == "Selection":
+            for i in range(len(current_arr)):
+                cur_min = i
+
+                for j in range(i, len(current_arr)):
+                    if current_arr[j] < current_arr[cur_min]:
+                        cur_min = j
+
+                    screen.fill(black)
+                    current_rects = update_rects(current_arr)
+                    draw_arr(current_rects, [j, i])
+
+                    for event in pg.event.get():
+                        if event.type == pg.QUIT:
+                            sys.exit()
+
+                    text = display_info("Selection", st, time.time(), smallFont)
+                    screen.blit(text[0][0], text[0][1])
+                    screen.blit(text[1][0], text[1][1])
+                    pg.display.flip()
+
+                current_arr[i], current_arr[cur_min] = current_arr[cur_min], current_arr[i]
 
         et = time.time()
         text = display_info(sort_type, st, et, smallFont)
