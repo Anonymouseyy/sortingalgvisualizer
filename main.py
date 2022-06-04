@@ -215,9 +215,11 @@ while True:
             screen.fill(black)
             screen.blit(text[0][0], text[0][1])
             screen.blit(text[1][0], text[1][1])
-            current_rects = update_rects(current_arr)
             draw_arr(current_rects, lst, True)
             pg.display.flip()
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    sys.exit()
             time.sleep(0.01)
 
         sorting = False
