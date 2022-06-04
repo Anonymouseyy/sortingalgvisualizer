@@ -23,7 +23,7 @@ largeFont = pg.font.Font("Roboto-Black.ttf", 40)
 
 current_arr = generate()
 current_rects = update_rects(current_arr)
-sort_types = ["Bubble", "Selection", "Insertion", "Merge"]
+sort_types = ["Bubble", "Selection", "Insertion", "Merge", "Quick"]
 st = None
 sort_type = None
 sorting = False
@@ -206,6 +206,33 @@ while True:
                     merge(arr, l, m, r)
 
             merge_sort(current_arr, 0, len(current_arr)-1)
+
+        elif sort_type == "Quick":
+            def partition(arr, low, high):
+                pivot = arr[high]
+                pivot_idx = high
+
+                i = low-1
+
+                for j in range(low, high):
+                    if arr[j] <= pivot:
+                        i += 1
+
+                        arr[i], arr[j] = arr[j], arr[i]
+
+                    sort_update(current_arr, screen, [i, j, pivot_idx])
+
+                arr[i + 1], arr[high] = arr[high], arr[i + 1]
+                sort_update(current_arr, screen, [i, j, pivot_idx])
+                return i + 1
+
+            def quick_sort(arr, low, high):
+                if low < high:
+                    pi = partition(arr, low, high)
+                    quick_sort(arr, low, pi-1)
+                    quick_sort(arr, pi+1, high)
+
+            quick_sort(current_arr, 0, len(current_arr)-1)
 
         et = time.time()
         text = display_info(sort_type, st, et, smallFont)
