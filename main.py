@@ -4,7 +4,7 @@ import time
 from helpers import generate, update_rects, display_info, OptionBox
 
 pg.init()
-size = width, height = 1000, 600
+size = width, height = 1500, 800
 
 # Colors
 white = (255, 255, 255)
@@ -176,7 +176,6 @@ while True:
                         j += 1
                     k += 1
                     sort_update(current_arr, screen, [i, j, k])
-                    time.sleep(0.01)
 
                 # Copy the remaining elements of L[], if there
                 # are any
@@ -185,7 +184,6 @@ while True:
                     i += 1
                     k += 1
                     sort_update(current_arr, screen, [i, j, k])
-                    time.sleep(0.01)
 
                 # Copy the remaining elements of R[], if there
                 # are any
@@ -194,7 +192,6 @@ while True:
                     j += 1
                     k += 1
                     sort_update(current_arr, screen, [i, j, k])
-                    time.sleep(0.01)
 
             def merge_sort(arr, l, r):
                 if l < r:
@@ -210,15 +207,16 @@ while True:
         et = time.time()
         text = display_info(sort_type, st, et, smallFont)
 
-        for count, i in enumerate(current_arr):
-            lst = [x for x in range(len(current_arr)) if x < i]
+        for i in range(len(current_arr)//2):
+            lst = [x for x in range(len(current_arr)) if x < i*2]
             screen.fill(black)
             screen.blit(text[0][0], text[0][1])
             screen.blit(text[1][0], text[1][1])
-            current_rects = update_rects(current_arr)
             draw_arr(current_rects, lst, True)
             pg.display.flip()
-            time.sleep(0.01)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    sys.exit()
 
         sorting = False
         sort_type = None

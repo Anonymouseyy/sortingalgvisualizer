@@ -3,7 +3,7 @@ import random
 
 white = (255, 255, 255)
 black = (0, 0, 0)
-width, height = 1000, 600
+width, height = 1500, 800
 
 
 def generate():
@@ -12,8 +12,8 @@ def generate():
     '''
     lst = set()
 
-    while len(lst) < 200:
-        lst.add(random.randint(1, 500))
+    while len(lst) < 1500:
+        lst.add(random.uniform(1, 800))
 
     lst = list(lst)
     random.shuffle(lst)
@@ -27,7 +27,7 @@ def update_rects(arr):
     lst = list()
 
     for count, i in enumerate(arr):
-        lst.append(pg.Rect((count*5, 600-i), (4, i)))
+        lst.append(pg.Rect((count*1, 800-i), (1, i)))
 
     return lst
 
