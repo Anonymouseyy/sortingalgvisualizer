@@ -23,7 +23,7 @@ largeFont = pg.font.Font("Roboto-Black.ttf", 40)
 
 current_arr = generate()
 current_rects = update_rects(current_arr)
-sort_types = ["Bubble", "Selection", "Insertion"]
+sort_types = ["Bubble", "Selection", "Insertion", "Merge"]
 st = None
 sort_type = None
 sorting = False
@@ -42,6 +42,23 @@ def draw_arr(rects, selected=[], end=False):
                 pg.draw.rect(screen, green, rect)
         else:
             pg.draw.rect(screen, white, rect)
+
+
+def sort_update(arr, screen, display):
+    global current_rects
+    global sort_type
+    screen.fill(black)
+    current_rects = update_rects(arr)
+    draw_arr(current_rects, display)
+
+    for e in pg.event.get():
+        if e.type == pg.QUIT:
+            sys.exit()
+
+    t = display_info(sort_type, st, time.time(), smallFont)
+    screen.blit(t[0][0], t[0][1])
+    screen.blit(t[1][0], t[1][1])
+    pg.display.flip()
 
 
 while True:
@@ -97,19 +114,9 @@ while True:
                 for j in range(len(current_arr)-i-1):
                     if current_arr[j] > current_arr[j+1]:
                         current_arr[j], current_arr[j+1] = current_arr[j+1], current_arr[j]
-                        screen.fill(black)
-                        current_rects = update_rects(current_arr)
-                        draw_arr(current_rects, [j, j+1])
                         count += 1
 
-                    for event in pg.event.get():
-                        if event.type == pg.QUIT:
-                            sys.exit()
-
-                    text = display_info("Bubble", st, time.time(), smallFont)
-                    screen.blit(text[0][0], text[0][1])
-                    screen.blit(text[1][0], text[1][1])
-                    pg.display.flip()
+                    sort_update(current_arr, screen, [j, j+1])
 
                 if not count:
                     break
@@ -123,18 +130,7 @@ while True:
                     current_arr[j+1] = current_arr[j]
                     j -= 1
 
-                    screen.fill(black)
-                    current_rects = update_rects(current_arr)
-                    draw_arr(current_rects, [j, i])
-
-                    for event in pg.event.get():
-                        if event.type == pg.QUIT:
-                            sys.exit()
-
-                    text = display_info("Insertion", st, time.time(), smallFont)
-                    screen.blit(text[0][0], text[0][1])
-                    screen.blit(text[1][0], text[1][1])
-                    pg.display.flip()
+                    sort_update(current_arr, screen, [i, j])
 
                 current_arr[j+1] = key
 
@@ -146,20 +142,70 @@ while True:
                     if current_arr[j] < current_arr[cur_min]:
                         cur_min = j
 
-                    screen.fill(black)
-                    current_rects = update_rects(current_arr)
-                    draw_arr(current_rects, [j, i])
-
-                    for event in pg.event.get():
-                        if event.type == pg.QUIT:
-                            sys.exit()
-
-                    text = display_info("Selection", st, time.time(), smallFont)
-                    screen.blit(text[0][0], text[0][1])
-                    screen.blit(text[1][0], text[1][1])
-                    pg.display.flip()
+                    sort_update(current_arr, screen, [i, j])
 
                 current_arr[i], current_arr[cur_min] = current_arr[cur_min], current_arr[i]
+
+        elif sort_type == "Merge":
+            def merge(arr, l, m, r):
+                n1 = m - l + 1
+                n2 = r - m
+
+                # create temp arrays
+                L = [0] * (n1)
+                R = [0] * (n2)
+
+                # Copy data to temp arrays L[] and R[]
+                for i in range(0, n1):
+                    L[i] = arr[l + i]
+
+                for j in range(0, n2):
+                    R[j] = arr[m + 1 + j]
+
+                # Merge the temp arrays back into arr[l..r]
+                i = 0  # Initial index of first subarray
+                j = 0  # Initial index of second subarray
+                k = l  # Initial index of merged subarray
+
+                while i < n1 and j < n2:
+                    if L[i] <= R[j]:
+                        arr[k] = L[i]
+                        i += 1
+                    else:
+                        arr[k] = R[j]
+                        j += 1
+                    k += 1
+                    sort_update(current_arr, screen, [i, j, k])
+                    time.sleep(0.01)
+
+                # Copy the remaining elements of L[], if there
+                # are any
+                while i < n1:
+                    arr[k] = L[i]
+                    i += 1
+                    k += 1
+                    sort_update(current_arr, screen, [i, j, k])
+                    time.sleep(0.01)
+
+                # Copy the remaining elements of R[], if there
+                # are any
+                while j < n2:
+                    arr[k] = R[j]
+                    j += 1
+                    k += 1
+                    sort_update(current_arr, screen, [i, j, k])
+                    time.sleep(0.01)
+
+            def merge_sort(arr, l, r):
+                if l < r:
+                    m = l + (r - l) // 2
+
+                    # Sort first and second halves
+                    merge_sort(arr, l, m)
+                    merge_sort(arr, m + 1, r)
+                    merge(arr, l, m, r)
+
+            merge_sort(current_arr, 0, len(current_arr)-1)
 
         et = time.time()
         text = display_info(sort_type, st, et, smallFont)
