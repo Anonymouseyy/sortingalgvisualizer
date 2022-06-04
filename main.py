@@ -1,6 +1,7 @@
 import pygame as pg
 import sys
 import time
+import random
 from helpers import generate, update_rects, display_info, OptionBox
 
 pg.init()
@@ -23,7 +24,7 @@ largeFont = pg.font.Font("Roboto-Black.ttf", 40)
 
 current_arr = generate()
 current_rects = update_rects(current_arr)
-sort_types = ["Bubble", "Selection", "Insertion", "Merge"]
+sort_types = ["Bubble", "Selection", "Insertion", "Merge", "Quick"]
 st = None
 sort_type = None
 sorting = False
@@ -151,21 +152,18 @@ while True:
                 n1 = m - l + 1
                 n2 = r - m
 
-                # create temp arrays
                 L = [0] * (n1)
                 R = [0] * (n2)
 
-                # Copy data to temp arrays L[] and R[]
                 for i in range(0, n1):
                     L[i] = arr[l + i]
 
                 for j in range(0, n2):
                     R[j] = arr[m + 1 + j]
 
-                # Merge the temp arrays back into arr[l..r]
-                i = 0  # Initial index of first subarray
-                j = 0  # Initial index of second subarray
-                k = l  # Initial index of merged subarray
+                i = 0
+                j = 0
+                k = l
 
                 while i < n1 and j < n2:
                     if L[i] <= R[j]:
@@ -177,16 +175,12 @@ while True:
                     k += 1
                     sort_update(current_arr, screen, [i, j, k])
 
-                # Copy the remaining elements of L[], if there
-                # are any
                 while i < n1:
                     arr[k] = L[i]
                     i += 1
                     k += 1
                     sort_update(current_arr, screen, [i, j, k])
 
-                # Copy the remaining elements of R[], if there
-                # are any
                 while j < n2:
                     arr[k] = R[j]
                     j += 1
@@ -197,18 +191,43 @@ while True:
                 if l < r:
                     m = l + (r - l) // 2
 
-                    # Sort first and second halves
                     merge_sort(arr, l, m)
                     merge_sort(arr, m + 1, r)
                     merge(arr, l, m, r)
 
             merge_sort(current_arr, 0, len(current_arr)-1)
 
+        elif sort_type == "Quick":
+            def partition(arr, low, high):
+                pivot = arr[high]
+                pivot_idx = high
+
+                i = low-1
+
+                for j in range(low, high):
+                    if arr[j] <= pivot:
+                        i += 1
+
+                        arr[i], arr[j] = arr[j], arr[i]
+
+                    sort_update(current_arr, screen, [i, j, pivot_idx])
+
+                arr[i + 1], arr[high] = arr[high], arr[i + 1]
+                sort_update(current_arr, screen, [i, j, pivot_idx])
+                return i + 1
+
+            def quick_sort(arr, low, high):
+                if low < high:
+                    pi = partition(arr, low, high)
+                    quick_sort(arr, low, pi-1)
+                    quick_sort(arr, pi+1, high)
+
+            quick_sort(current_arr, 0, len(current_arr)-1)
         et = time.time()
         text = display_info(sort_type, st, et, smallFont)
 
-        for i in range(len(current_arr)//2):
-            lst = [x for x in range(len(current_arr)) if x < i*2]
+        for i in range(len(current_arr)//5):
+            lst = [x for x in range(len(current_arr)) if x < i*5]
             screen.fill(black)
             screen.blit(text[0][0], text[0][1])
             screen.blit(text[1][0], text[1][1])
@@ -217,6 +236,7 @@ while True:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     sys.exit()
+        time.sleep(2)
 
         sorting = False
         sort_type = None
