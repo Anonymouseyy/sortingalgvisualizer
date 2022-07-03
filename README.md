@@ -4,4 +4,8 @@ A simple sorting algorithm visualizer made with Python in Pygame. Fun first expe
 
 # Implemented Sorts
 
-- None Yet
+- Bubble Sort
+- Selection Sort
+- Insertion Sort
+- Merge Sort
+- Quick Sort
