@@ -1,10 +1,11 @@
 import pygame as pg
 import sys
 import time
+import random
 from helpers import generate, update_rects, display_info, OptionBox
 
 pg.init()
-size = width, height = 1000, 600
+size = width, height = 1500, 800
 
 # Colors
 white = (255, 255, 255)
@@ -151,21 +152,18 @@ while True:
                 n1 = m - l + 1
                 n2 = r - m
 
-                # create temp arrays
                 L = [0] * (n1)
                 R = [0] * (n2)
 
-                # Copy data to temp arrays L[] and R[]
                 for i in range(0, n1):
                     L[i] = arr[l + i]
 
                 for j in range(0, n2):
                     R[j] = arr[m + 1 + j]
 
-                # Merge the temp arrays back into arr[l..r]
-                i = 0  # Initial index of first subarray
-                j = 0  # Initial index of second subarray
-                k = l  # Initial index of merged subarray
+                i = 0
+                j = 0
+                k = l
 
                 while i < n1 and j < n2:
                     if L[i] <= R[j]:
@@ -176,31 +174,23 @@ while True:
                         j += 1
                     k += 1
                     sort_update(current_arr, screen, [i, j, k])
-                    time.sleep(0.01)
 
-                # Copy the remaining elements of L[], if there
-                # are any
                 while i < n1:
                     arr[k] = L[i]
                     i += 1
                     k += 1
                     sort_update(current_arr, screen, [i, j, k])
-                    time.sleep(0.01)
 
-                # Copy the remaining elements of R[], if there
-                # are any
                 while j < n2:
                     arr[k] = R[j]
                     j += 1
                     k += 1
                     sort_update(current_arr, screen, [i, j, k])
-                    time.sleep(0.01)
 
             def merge_sort(arr, l, r):
                 if l < r:
                     m = l + (r - l) // 2
 
-                    # Sort first and second halves
                     merge_sort(arr, l, m)
                     merge_sort(arr, m + 1, r)
                     merge(arr, l, m, r)
@@ -237,8 +227,8 @@ while True:
         et = time.time()
         text = display_info(sort_type, st, et, smallFont)
 
-        for count, i in enumerate(current_arr):
-            lst = [x for x in range(len(current_arr)) if x < i]
+        for i in range(len(current_arr)//5):
+            lst = [x for x in range(len(current_arr)) if x < i*5]
             screen.fill(black)
             screen.blit(text[0][0], text[0][1])
             screen.blit(text[1][0], text[1][1])
@@ -247,6 +237,7 @@ while True:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     sys.exit()
+
             time.sleep(0.01)
 
         sorting = False
