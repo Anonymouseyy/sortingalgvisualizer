@@ -223,6 +223,7 @@ while True:
                     quick_sort(arr, pi+1, high)
 
             quick_sort(current_arr, 0, len(current_arr)-1)
+
         et = time.time()
         text = display_info(sort_type, st, et, smallFont)
 
@@ -236,7 +237,8 @@ while True:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     sys.exit()
-        time.sleep(2)
+
+            time.sleep(0.01)
 
         sorting = False
         sort_type = None

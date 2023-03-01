@@ -46,6 +46,7 @@ def display_info(sort_type, st, ct, font):
     return [[tsort, tsort_rect], [run_time, run_time_rect]]
 
 
+# Courtesy of Rabid76 https://stackoverflow.com/questions/19877900/tips-on-adding-creating-a-drop-down-selection-box-in-pygame
 class OptionBox():
 
     def __init__(self, x, y, w, h, color, highlight_color, font, option_list, selected=0):
